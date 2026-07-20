@@ -16,7 +16,7 @@ on:
       satellite-build:
         type: string
         description: Companion Version
-        default: "v1.9.1"
+        default: "v3.3.1"
         required: true
 
       armbian-board:
