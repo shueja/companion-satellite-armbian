@@ -271,7 +271,7 @@ jobs:
     name: Build Armbian
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           submodules: "true"
 
@@ -282,7 +282,7 @@ jobs:
         run: |
           git clone --depth=1 --branch=main https://github.com/armbian/build
           ./build/compile.sh build \
-          BOARD=${{ github.event.inputs.armbian-board }} \
+          BOARD=${{ inputs.armbian-board }} \
           BRANCH=current \
           RELEASE=noble \
           BUILD_MINIMAL=yes \
@@ -301,7 +301,7 @@ jobs:
       - name: build image
         run: |
           sudo packer init companion-satellite.pkr.hcl
-          sudo packer build -var "url=build/output/images/armbian.img" -var "build=${{ github.event.inputs.satellite-build }}" companion-satellite.pkr.hcl
+          sudo packer build -var "url=build/output/images/armbian.img" -var "build=${{ inputs.satellite-build }}" companion-satellite.pkr.hcl
         env:
           PACKER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -316,12 +316,12 @@ jobs:
           sudo losetup --detach "$device"
 
           sudo gzip -n armbian-companion-satellite.img
-          targetname=${{ github.event.inputs.armbian-board }}-companion-satellite-${{ github.event.inputs.satellite-build }}.img.gz
+          targetname=${{ inputs.armbian-board }}-companion-satellite-${{ inputs.satellite-build }}.img.gz
           echo $targetname
           sudo mv armbian-companion-satellite.img.gz ${targetname}
 
       - name: Upload Armbian image
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
-          name: "armbian-${{ github.event.inputs.armbian-board }}-companion-satellite-${{ github.event.inputs.satellite-build }}"
-          path: output-satellitepi/${{ github.event.inputs.armbian-board }}-companion-satellite-${{ github.event.inputs.satellite-build }}.img.gz
+          name: "armbian-${{ inputs.armbian-board }}-companion-satellite-${{ inputs.satellite-build }}"
+          path: output-satellitepi/${{ inputs.armbian-board }}-companion-satellite-${{ inputs.satellite-build }}.img.gz

@@ -33,7 +33,7 @@ jobs:
           - orangepizero3
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           submodules: "true"
       - name: Call Armbian Builder Workflow
@@ -43,11 +43,11 @@ jobs:
           armbian-board: ${{ matrix.armbian-board }}
           satellite-build: ${{ needs.get-satellite-version.outputs.satellite_version }}
   build-release:
-    needs: build-matrix
+    needs: [build-matrix, get-satellite-version]
     runs-on: ubuntu-latest
     steps:
       - name: Download Built Artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v4
         with:
           pattern: "armbian-*"
           merge-multiple: true
@@ -58,6 +58,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: "companion-update-${{ needs.get-satellite-version.outputs.satellite_version }}"
-          release_name: "Companion Satellite Update ${{ needs.get-satellite-version.outputs.satellite_version }}"
+          name: "Companion Satellite Update ${{ needs.get-satellite-version.outputs.satellite_version }}"
           artifacts: ./artifacts/*
           generateReleaseNotes: true
